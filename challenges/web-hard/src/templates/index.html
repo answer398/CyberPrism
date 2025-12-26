@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络诊断工具 - Command Injection挑战</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 36px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        .terminal {
+            background: #000;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        .terminal-header {
+            color: #00ff00;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        form {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 30px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .output {
+            background: #0a0a0a;
+            padding: 15px;
+            border-left: 3px solid #00ff00;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #ff0000;
+            text-shadow: 0 0 5px #ff0000;
+        }
+        .hint {
+            background: #2a2a00;
+            border: 1px dashed #ffff00;
+            color: #ffff00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .hint strong {
+            text-shadow: 0 0 5px #ffff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 网络诊断工具</h1>
+
+        <div class="terminal">
+            <div class="terminal-header">$ PING UTILITY v1.0</div>
+
+            <form method="POST" action="/ping">
+                <p style="margin-bottom: 10px;">输入要ping的主机地址:</p>
+                <input type="text" name="host" placeholder="例如: 8.8.8.8 或 google.com"
+                       value="{{ host if host else '' }}" required>
+                <button type="submit">执行 PING</button>
+            </form>
+
+            {% if error %}
+            <div class="output error">
+                [ERROR] {{ error }}
+            </div>
+            {% endif %}
+
+            {% if result %}
+            <div class="output">
+{{ result }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="hint">
+            <strong>⚠ 挑战说明:</strong><br>
+            这是一个网络诊断工具,但存在命令注入漏洞。<br>
+            目标: 绕过输入过滤,执行系统命令,读取FLAG文件。<br>
+            <small>提示1: 系统有基本的字符过滤,需要想办法绕过...</small><br>
+            <small>提示2: FLAG文件位于 /flag.txt</small><br>
+            <small>提示3: 考虑使用换行符等特殊字符</small><br>
+            <small>技能标签: 利用公共漏洞 / 命令与控制</small>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">$ SYSTEM INFO</div>
+            <div class="output">
+系统已就绪,等待命令输入...
+当前环境: Linux Container
+可用工具: ping, curl, cat, ls, etc.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

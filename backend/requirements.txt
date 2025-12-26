@@ -1,0 +1,9 @@
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.5
+Flask-CORS==4.0.0
+Flask-JWT-Extended==4.6.0
+python-dotenv==1.0.0
+docker==7.0.0
+bcrypt==4.1.2
+PyYAML==6.0.1
