@@ -138,6 +138,11 @@ cd CyberPrism
 ```bash
 cd backend
 
+# 创建虚拟环境（推荐）
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+# 或 venv\Scripts\activate  # Windows
+
 # 安装依赖
 pip install -r requirements.txt
 
