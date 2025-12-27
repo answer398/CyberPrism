@@ -37,6 +37,10 @@
               <el-icon><Document /></el-icon>
               <span>题目管理</span>
             </el-menu-item>
+            <el-menu-item index="admin/submissions">
+              <el-icon><List /></el-icon>
+              <span>提交记录</span>
+            </el-menu-item>
             <el-menu-item index="admin/containers">
               <el-icon><Box /></el-icon>
               <span>容器管理</span>

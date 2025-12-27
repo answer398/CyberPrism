@@ -84,3 +84,12 @@ export const getChallengeStats = () => {
 export const getDockerImages = () => {
   return request.get('/admin/docker-images')
 }
+
+// ===== 提交记录管理 =====
+export const getAllSubmissions = (params = {}) => {
+  return request.get('/admin/submissions', { params })
+}
+
+export const deleteSubmission = (submissionId) => {
+  return request.delete(`/admin/submissions/${submissionId}`)
+}

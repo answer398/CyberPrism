@@ -128,7 +128,7 @@ Docker 20.10+
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/你的用户名/CyberPrism.git
+git clone https://github.com/answer398/CyberPrism.git
 cd CyberPrism
 ```
 
@@ -526,8 +526,8 @@ curl -X POST http://localhost:5000/api/admin/users \
 
 ## 📧 联系方式
 
-- 项目主页: [https://github.com/你的用户名/CyberPrism](https://github.com/你的用户名/CyberPrism)
-- Issue反馈: [https://github.com/你的用户名/CyberPrism/issues](https://github.com/你的用户名/CyberPrism/issues)
+- 项目主页: [https://github.com/answer398/CyberPrism](https://github.com/你的用户名/CyberPrism)
+- Issue反馈: [https://github.com/answer398/CyberPrism/issues](https://github.com/你的用户名/CyberPrism/issues)
 
 ---
 

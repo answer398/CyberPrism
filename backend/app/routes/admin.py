@@ -457,3 +457,111 @@ def list_docker_images():
         import traceback
         traceback.print_exc()
         return jsonify({'images': []}), 200  # 返回空列表而不是错误
+
+
+# ========== 提交记录管理 ==========
+
+@bp.route('/submissions', methods=['GET'])
+@admin_required
+def get_all_submissions():
+    """获取所有提交记录（支持筛选）"""
+    user_id = request.args.get('user_id', type=int)
+    challenge_id = request.args.get('challenge_id', type=int)
+    is_correct = request.args.get('is_correct', type=str)
+    limit = request.args.get('limit', 100, type=int)
+
+    query = Submission.query
+
+    # 只查询正确的提交记录
+    if is_correct == 'true':
+        query = query.filter_by(is_correct=True)
+    elif is_correct == 'false':
+        query = query.filter_by(is_correct=False)
+
+    if user_id:
+        query = query.filter_by(user_id=user_id)
+
+    if challenge_id:
+        query = query.filter_by(challenge_id=challenge_id)
+
+    submissions = query.order_by(Submission.submitted_at.desc()).limit(limit).all()
+
+    result = []
+    for sub in submissions:
+        user = db.session.get(User, sub.user_id)
+        challenge = db.session.get(Challenge, sub.challenge_id)
+        result.append({
+            'id': sub.id,
+            'user_id': sub.user_id,
+            'username': user.username if user else 'Unknown',
+            'display_name': user.display_name if user else 'Unknown',
+            'challenge_id': sub.challenge_id,
+            'challenge_title': challenge.title if challenge else 'Unknown',
+            'challenge_points': challenge.points if challenge else 0,
+            'is_correct': sub.is_correct,
+            'submitted_at': sub.submitted_at.isoformat() + 'Z' if sub.submitted_at else None
+        })
+
+    return jsonify(result), 200
+
+
+@bp.route('/submissions/<int:submission_id>', methods=['DELETE'])
+@admin_required
+def delete_submission(submission_id):
+    """删除提交记录并同步更新用户总分"""
+    submission = db.session.get(Submission, submission_id)
+
+    if not submission:
+        return jsonify({'error': '提交记录不存在'}), 404
+
+    try:
+        user_id = submission.user_id
+        challenge_id = submission.challenge_id
+        is_correct = submission.is_correct
+
+        # 获取题目信息
+        challenge = db.session.get(Challenge, challenge_id)
+        if not challenge:
+            return jsonify({'error': '题目不存在'}), 404
+
+        # 删除提交记录
+        db.session.delete(submission)
+
+        # 只有删除正确提交时，才需要处理技能标签
+        if is_correct:
+            # 检查该用户是否还有该题目的其他正确提交
+            other_correct = Submission.query.filter_by(
+                user_id=user_id,
+                challenge_id=challenge_id,
+                is_correct=True
+            ).filter(Submission.id != submission_id).first()
+
+            # 如果没有其他正确提交，需要删除对应的技能标签
+            if not other_correct and challenge.skill_tags:
+                skill_tags = json.loads(challenge.skill_tags)
+                for skill_code in skill_tags.values():
+                    # 删除该用户的这个技能标签
+                    skill_tag = UserSkillTag.query.filter_by(
+                        user_id=user_id,
+                        skill_code=skill_code
+                    ).first()
+
+                    if skill_tag:
+                        db.session.delete(skill_tag)
+
+        db.session.commit()
+
+        # 获取更新后的用户信息
+        user = db.session.get(User, user_id)
+
+        return jsonify({
+            'message': '提交记录已删除',
+            'user': {
+                'total_points': user.total_points if user else 0,
+                'solved_count': user.solved_count if user else 0
+            }
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
