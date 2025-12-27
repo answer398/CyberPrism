@@ -538,16 +538,22 @@ def delete_submission(submission_id):
 
             # 如果没有其他正确提交，需要删除对应的技能标签
             if not other_correct and challenge.skill_tags:
-                skill_tags = json.loads(challenge.skill_tags)
-                for skill_code in skill_tags.values():
-                    # 删除该用户的这个技能标签
-                    skill_tag = UserSkillTag.query.filter_by(
-                        user_id=user_id,
-                        skill_code=skill_code
-                    ).first()
+                try:
+                    skill_tags = json.loads(challenge.skill_tags)
+                    # skill_tags格式: {"类别": "技能名称"}
+                    for category, skill_name in skill_tags.items():
+                        # 删除该用户的这个技能标签
+                        skill_tag = UserSkillTag.query.filter_by(
+                            user_id=user_id,
+                            category=category,
+                            skill_name=skill_name
+                        ).first()
 
-                    if skill_tag:
-                        db.session.delete(skill_tag)
+                        if skill_tag:
+                            db.session.delete(skill_tag)
+                except Exception as tag_error:
+                    print(f"删除技能标签失败: {tag_error}")
+                    # 继续执行，不影响删除提交记录
 
         db.session.commit()
 

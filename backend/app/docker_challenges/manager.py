@@ -27,9 +27,9 @@ def get_docker_client():
             except Exception as e2:
                 print(f"使用命名管道失败: {e2}")
 
-        # Linux环境下尝试Unix socket
+        # Linux环境下尝试Unix socket（注意是三个斜杠）
         try:
-            client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+            client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
             client.ping()
             print("使用Unix socket连接成功")
             return client
