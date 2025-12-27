@@ -113,7 +113,7 @@ export default {
           localStorage.setItem('user', JSON.stringify(res.user))
 
           ElMessage.success('注册成功!')
-          router.push('/dashboard')
+          router.push('/challenges')
         } catch (error) {
           console.error(error)
         } finally {
