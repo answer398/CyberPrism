@@ -163,6 +163,28 @@ def submit_answer(challenge_id):
 
     db.session.commit()
 
+    # 如果是靶场题且答案正确,自动销毁用户的容器
+    if is_correct and challenge.type == 'docker':
+        from app.docker_challenges import DockerManager
+        from app.models import ContainerInstance
+
+        docker_manager = DockerManager()
+
+        # 查找用户在此题目上运行的容器
+        running_container = ContainerInstance.query.filter_by(
+            user_id=user.id,
+            challenge_id=challenge_id,
+            status='running'
+        ).first()
+
+        if running_container:
+            try:
+                docker_manager.stop_container(running_container.id, user_id=user.id, is_admin=False)
+                print(f"自动销毁容器: {running_container.container_name} (用户: {user.username}, 题目: {challenge.title})")
+            except Exception as e:
+                print(f"自动销毁容器失败: {str(e)}")
+                # 不影响提交结果,继续返回成功
+
     return jsonify({
         'is_correct': is_correct,
         'message': '恭喜!答案正确!' if is_correct else '答案错误,请重试',

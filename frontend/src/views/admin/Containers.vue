@@ -4,10 +4,6 @@
       <el-aside width="250px">
         <div class="logo">CyberPrism</div>
         <el-menu :default-active="'admin/containers'" @select="handleMenuSelect">
-          <el-menu-item index="dashboard">
-            <el-icon><HomeFilled /></el-icon>
-            <span>个人中心</span>
-          </el-menu-item>
           <el-menu-item index="challenges">
             <el-icon><Document /></el-icon>
             <span>题目挑战</span>

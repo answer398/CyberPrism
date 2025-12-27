@@ -4,10 +4,6 @@
       <el-aside width="250px">
         <div class="logo">CyberPrism</div>
         <el-menu :default-active="'containers'" @select="handleMenuSelect">
-          <el-menu-item index="dashboard">
-            <el-icon><HomeFilled /></el-icon>
-            <span>个人中心</span>
-          </el-menu-item>
           <el-menu-item index="challenges">
             <el-icon><Document /></el-icon>
             <span>题目挑战</span>
@@ -28,7 +24,7 @@
             <el-icon><Setting /></el-icon>
             <span>管理后台</span>
           </el-menu-item>
-          <el-menu-item @click="handleLogout">
+          <el-menu-item index="logout" @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             <span>退出登录</span>
           </el-menu-item>

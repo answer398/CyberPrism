@@ -4,10 +4,6 @@
       <el-aside width="250px">
         <div class="logo">CyberPrism</div>
         <el-menu :default-active="'challenges'" @select="handleMenuSelect">
-          <el-menu-item index="dashboard">
-            <el-icon><HomeFilled /></el-icon>
-            <span>个人中心</span>
-          </el-menu-item>
           <el-menu-item index="challenges">
             <el-icon><Document /></el-icon>
             <span>题目挑战</span>
@@ -28,7 +24,7 @@
             <el-icon><Setting /></el-icon>
             <span>管理后台</span>
           </el-menu-item>
-          <el-menu-item @click="handleLogout">
+          <el-menu-item index="logout" @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             <span>退出登录</span>
           </el-menu-item>
@@ -156,8 +152,61 @@
                 style="margin-bottom: 15px;"
               >
                 <p>点击"启动容器"后,系统会为你创建独立的靶场环境</p>
-                <p>容器将在60分钟后自动过期</p>
+                <p>容器将在60分钟后自动过期,你可以延长时间</p>
+                <p>每个用户最多同时运行3个容器</p>
               </el-alert>
+
+              <!-- 容器信息卡片 -->
+              <el-card v-if="containerInfo" shadow="hover" style="margin-bottom: 15px;">
+                <template #header>
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: bold;">容器信息</span>
+                    <el-tag type="success" size="small">运行中</el-tag>
+                  </div>
+                </template>
+
+                <p style="margin: 8px 0;">
+                  <strong>访问地址:</strong>
+                  <a :href="containerAccessUrl" target="_blank" style="color: #409EFF; margin-left: 8px;">
+                    {{ containerAccessUrl }}
+                  </a>
+                  <el-button
+                    type="primary"
+                    size="small"
+                    text
+                    @click="copyToClipboard(containerAccessUrl)"
+                    style="margin-left: 8px;"
+                  >
+                    复制
+                  </el-button>
+                </p>
+                <p style="margin: 8px 0;">
+                  <strong>剩余时间:</strong>
+                  <span :style="{ color: remainingMinutes < 10 ? '#F56C6C' : '#67C23A', marginLeft: '8px', fontWeight: 'bold' }">
+                    {{ remainingTimeText }}
+                  </span>
+                </p>
+                <div style="margin-top: 15px;">
+                  <el-space>
+                    <el-button
+                      type="warning"
+                      size="small"
+                      @click="extendContainerTime"
+                      :loading="extendLoading"
+                    >
+                      延长30分钟
+                    </el-button>
+                    <el-button
+                      type="danger"
+                      size="small"
+                      @click="destroyContainer"
+                      :loading="destroyLoading"
+                    >
+                      销毁容器
+                    </el-button>
+                  </el-space>
+                </div>
+              </el-card>
 
               <el-input
                 v-model="userAnswer"
@@ -186,8 +235,9 @@
                 type="warning"
                 @click="startContainer"
                 :loading="containerLoading"
+                :disabled="containerInfo && containerInfo.status === 'running'"
               >
-                启动容器
+                {{ containerInfo && containerInfo.status === 'running' ? '容器已启动' : '启动容器' }}
               </el-button>
               <el-button
                 type="primary"
@@ -206,11 +256,11 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getChallenges, submitAnswer as submitAnswerAPI } from '@/api/challenge'
-import { startContainer as startContainerAPI } from '@/api/container'
+import { startContainer as startContainerAPI, stopContainer, extendContainer, getMyContainers } from '@/api/container'
 
 // 技能标签矩阵（与后端保持一致）
 const SKILL_MATRIX = {
@@ -252,6 +302,13 @@ export default {
     const submitLoading = ref(false)
     const containerLoading = ref(false)
 
+    // 容器管理相关状态
+    const containerInfo = ref(null)
+    const extendLoading = ref(false)
+    const destroyLoading = ref(false)
+    const countdownTimer = ref(null)
+    const remainingSeconds = ref(0)
+
     const filters = ref({
       category: '',
       skillTag: '',
@@ -269,6 +326,105 @@ export default {
     const handleCategoryChange = () => {
       filters.value.skillTag = ''
       loadChallenges()
+    }
+
+    // 容器访问地址
+    const containerAccessUrl = computed(() => {
+      if (!containerInfo.value || !containerInfo.value.host_port) return ''
+      return `http://${window.location.hostname}:${containerInfo.value.host_port}`
+    })
+
+    // 剩余时间(分钟)
+    const remainingMinutes = computed(() => {
+      return Math.floor(remainingSeconds.value / 60)
+    })
+
+    // 剩余时间文本
+    const remainingTimeText = computed(() => {
+      const minutes = Math.floor(remainingSeconds.value / 60)
+      const seconds = remainingSeconds.value % 60
+      return `${minutes}分${seconds}秒`
+    })
+
+    // 计算剩余秒数
+    const calculateRemainingSeconds = () => {
+      if (!containerInfo.value || !containerInfo.value.expires_at) {
+        remainingSeconds.value = 0
+        return
+      }
+
+      const expiresAt = new Date(containerInfo.value.expires_at)
+      const now = new Date()
+      const diff = Math.floor((expiresAt - now) / 1000)
+      remainingSeconds.value = diff > 0 ? diff : 0
+
+      if (remainingSeconds.value === 0 && containerInfo.value.status === 'running') {
+        // 容器已过期
+        containerInfo.value.status = 'stopped'
+        ElMessage.warning('容器已过期')
+        stopCountdown()
+      }
+    }
+
+    // 启动倒计时
+    const startCountdown = () => {
+      stopCountdown()
+      calculateRemainingSeconds()
+      countdownTimer.value = setInterval(() => {
+        if (remainingSeconds.value > 0) {
+          remainingSeconds.value--
+        } else {
+          stopCountdown()
+          if (containerInfo.value) {
+            containerInfo.value.status = 'stopped'
+          }
+          ElMessage.warning('容器已过期')
+        }
+      }, 1000)
+    }
+
+    // 停止倒计时
+    const stopCountdown = () => {
+      if (countdownTimer.value) {
+        clearInterval(countdownTimer.value)
+        countdownTimer.value = null
+      }
+    }
+
+    // 复制到剪贴板
+    const copyToClipboard = async (text) => {
+      try {
+        await navigator.clipboard.writeText(text)
+        ElMessage.success('已复制到剪贴板')
+      } catch (error) {
+        ElMessage.error('复制失败')
+      }
+    }
+
+    // 检查当前题目的容器
+    const checkChallengeContainer = async () => {
+      if (!currentChallenge.value || currentChallenge.value.type !== 'docker') {
+        return
+      }
+
+      try {
+        const containers = await getMyContainers()
+
+        // 查找当前题目的运行中容器(后端已只返回running状态的容器)
+        const challengeContainer = containers.find(
+          c => c.challenge_id === currentChallenge.value.id
+        )
+
+        if (challengeContainer) {
+          containerInfo.value = challengeContainer
+          startCountdown()
+        } else {
+          containerInfo.value = null
+          stopCountdown()
+        }
+      } catch (error) {
+        console.error('获取容器信息失败:', error)
+      }
     }
 
     // 计算属性: 按类别和技能标签分组题目
@@ -347,7 +503,7 @@ export default {
       }
     }
 
-    const openChallenge = (challenge) => {
+    const openChallenge = async (challenge) => {
       // 检查是否已经正确解答过
       if (challenge.solved) {
         ElMessage.info('您已经正确解答过此题')
@@ -356,7 +512,14 @@ export default {
 
       currentChallenge.value = challenge
       userAnswer.value = ''
+      containerInfo.value = null
+      stopCountdown()
       dialogVisible.value = true
+
+      // 如果是靶场题,检查是否有运行的容器
+      if (challenge.type === 'docker') {
+        await checkChallengeContainer()
+      }
     }
 
     const submitAnswer = async () => {
@@ -373,6 +536,13 @@ export default {
 
         if (result.is_correct) {
           ElMessage.success(`恭喜!答案正确!获得${result.points}分`)
+
+          // 如果是靶场题,容器会被后端自动销毁,清除前端状态
+          if (currentChallenge.value.type === 'docker') {
+            containerInfo.value = null
+            stopCountdown()
+          }
+
           dialogVisible.value = false
           loadChallenges() // 重新加载以更新solved状态
         } else {
@@ -391,16 +561,60 @@ export default {
         const result = await startContainerAPI(currentChallenge.value.id)
         ElMessage.success('容器启动成功!')
 
-        const accessUrl = `http://${window.location.hostname}:${result.container.host_port}`
-        ElMessage.info({
-          message: `访问地址: ${accessUrl}`,
-          duration: 10000,
-          showClose: true
-        })
+        containerInfo.value = result.container
+        startCountdown()
       } catch (error) {
         console.error(error)
+        const errorMsg = error.response?.data?.error || error.message || '启动失败'
+        ElMessage.error(errorMsg)
       } finally {
         containerLoading.value = false
+      }
+    }
+
+    const extendContainerTime = async () => {
+      if (!containerInfo.value) return
+
+      extendLoading.value = true
+      try {
+        const result = await extendContainer(containerInfo.value.id, 30)
+        ElMessage.success('容器时间已延长30分钟')
+
+        containerInfo.value = result.container
+        calculateRemainingSeconds()
+      } catch (error) {
+        console.error(error)
+        const errorMsg = error.response?.data?.error || error.message || '延长失败'
+        ElMessage.error(errorMsg)
+      } finally {
+        extendLoading.value = false
+      }
+    }
+
+    const destroyContainer = async () => {
+      if (!containerInfo.value) return
+
+      try {
+        await ElMessageBox.confirm('确定要销毁容器吗?', '警告', {
+          type: 'warning',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        })
+
+        destroyLoading.value = true
+        await stopContainer(containerInfo.value.id)
+        ElMessage.success('容器已销毁')
+
+        containerInfo.value = null
+        stopCountdown()
+      } catch (error) {
+        if (error !== 'cancel') {
+          console.error(error)
+          const errorMsg = error.response?.data?.error || error.message || '销毁失败'
+          ElMessage.error(errorMsg)
+        }
+      } finally {
+        destroyLoading.value = false
       }
     }
 
@@ -441,6 +655,10 @@ export default {
       loadChallenges()
     })
 
+    onUnmounted(() => {
+      stopCountdown()
+    })
+
     return {
       user,
       loading,
@@ -453,12 +671,21 @@ export default {
       userAnswer,
       submitLoading,
       containerLoading,
+      containerInfo,
+      containerAccessUrl,
+      remainingMinutes,
+      remainingTimeText,
+      extendLoading,
+      destroyLoading,
       getSkillOptions,
       handleCategoryChange,
       loadChallenges,
       openChallenge,
       submitAnswer,
       startContainer,
+      extendContainerTime,
+      destroyContainer,
+      copyToClipboard,
       getDifficultyType,
       getDifficultyText,
       handleMenuSelect,

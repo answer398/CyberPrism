@@ -4,13 +4,12 @@
       <el-aside width="250px">
         <div class="logo">CyberPrism</div>
         <el-menu :default-active="'leaderboard'" @select="handleMenuSelect">
-          <el-menu-item index="dashboard"><el-icon><HomeFilled /></el-icon><span>个人中心</span></el-menu-item>
           <el-menu-item index="challenges"><el-icon><Document /></el-icon><span>题目挑战</span></el-menu-item>
           <el-menu-item index="profile"><el-icon><UserFilled /></el-icon><span>个人资料</span></el-menu-item>
           <el-menu-item index="containers"><el-icon><Box /></el-icon><span>我的容器</span></el-menu-item>
           <el-menu-item index="leaderboard"><el-icon><TrendCharts /></el-icon><span>排行榜</span></el-menu-item>
           <el-menu-item v-if="user.is_admin" index="admin"><el-icon><Setting /></el-icon><span>管理后台</span></el-menu-item>
-          <el-menu-item @click="handleLogout"><el-icon><SwitchButton /></el-icon><span>退出登录</span></el-menu-item>
+          <el-menu-item index="logout" @click="handleLogout"><el-icon><SwitchButton /></el-icon><span>退出登录</span></el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>

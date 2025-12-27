@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+    image: cyberprism/web-sql-injection
+    container_name: cyberprism-web-sql-injection-${USER_ID:-default}
     ports:
       - "80"
     environment:

@@ -1,123 +1,267 @@
-# CyberPrism - CTF能力评估平台
+# CyberPrism - 网络安全能力评估平台
 
-CyberPrism是一个基于CTF题目和选择题的个人渗透测试能力评估平台。通过完成不同类型的安全挑战,用户可以解锁技能标签,平台会生成可视化的能力矩阵图,全面展示用户的PT能力。
+<div align="center">
+![CyberPrism](https://img.shields.io/badge/CyberPrism-CTF%20Platform-blue)
+![Python](https://img.shields.io/badge/Python-3.9%2B-green)
+![Vue](https://img.shields.io/badge/Vue-3.0-brightgreen)
+![Docker](https://img.shields.io/badge/Docker-20.10%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## 核心功能
+一个基于ATT&CK框架的网络安全能力评估平台，通过选择题和Docker靶场实战，全面评估和展示个人渗透测试能力。
 
-### 1. 用户系统
-- 用户注册和登录(JWT认证)
-- 个人信息管理(姓名、常用ID、邮箱)
-- 双权限系统(管理员/普通用户)
-- 技能标签自动解锁机制
+[快速开始](#快速开始) · [功能特性](#核心功能) · [部署文档](docs/DEPLOYMENT.md) · [出题指南](challenges/README.md)
 
-### 2. 题目系统
-- **选择题**: 测试理论知识
-- **靶场题**: Docker容器化的实战环境
-  - SQL注入
-  - 文件包含漏洞
-  - 命令注入
-  - 更多类型(可扩展)
+</div>
 
-### 3. 容器管理
-- 用户手动启动容器
-- 60分钟自动过期
-- 支持延时和手动停止
-- 管理员可管理所有用户容器
+---
 
-### 4. 能力评估
-- 基于MITRE ATT&CK技能标签体系
-- ECharts可视化能力矩阵
-- 技能分类:
-  - 信息收集与侦察
-  - 漏洞利用与攻击
-  - 后渗透
-  - 防御规避与反侦察
+## 📋 目录
 
-### 5. 管理后台
-- 用户管理(查看、修改、删除)
-- 题目管理(添加、编辑、删除)
-- 容器管理(查看、停止)
-- 平台统计信息
+- [核心功能](#核心功能)
+- [技术架构](#技术架构)
+- [快速开始](#快速开始)
+- [项目结构](#项目结构)
+- [功能详解](#功能详解)
+- [部署说明](#部署说明)
+- [开发指南](#开发指南)
+- [常见问题](#常见问题)
+- [许可证](#许可证)
 
-## 技术栈
+## 🎯 核心功能
 
-- **前端**: Vue 3 + Element Plus + ECharts + Vue Router
-- **后端**: Flask + SQLite + Flask-JWT-Extended
-- **容器化**: Docker + Docker Compose
-- **数据库**: SQLite
+### 1️⃣ 双模式题目系统
 
-## 快速开始
+#### 选择题模式
+- 📝 50道精选安全理论题目
+- 🏷️ 基于ATT&CK框架的技能分类
+- ✅ 实时答题反馈
+- 📊 自动技能标签解锁
+
+#### Docker靶场模式
+- 🐳 容器化实战环境
+- ⏱️ 60分钟限时挑战
+- 🔐 静态FLAG注入
+- 🎮 三种难度等级（简单/中等/困难）
+
+**内置靶场例题**:
+
+- `cyberprism/web-sql-injection` - SQL注入漏洞利用
+- `cyberprism/file-inclusion` - 文件包含漏洞利用
+- `cyberprism/command-injection` - 命令注入漏洞利用
+
+### 2️⃣ 智能能力评估
+
+- 🎨 **可视化能力矩阵**: ECharts热力图展示技能掌握度
+- 🏆 **技能标签体系**: 基于MITRE ATT&CK框架的13个技能点
+- 📈 **实时进度追踪**: 解题数、总分、排名实时更新
+
+### 3️⃣ 完善的用户系统
+
+- 👤 **用户注册/登录**: JWT令牌认证，24小时有效期
+- 🔐 **权限管理**: 管理员/普通用户双权限体系
+- 📊 **个人中心**: 查看解题记录、技能图谱、排行榜
+- 👥 **用户管理**: 管理员可管理所有用户信息
+
+### 4️⃣ 智能容器管理
+
+- 🚀 **一键启动**: 自动分配端口（30000-40000）
+- ⏰ **自动清理**: 60分钟后自动销毁过期容器
+- 🔄 **延时功能**: 支持延长30分钟
+- 🛑 **手动控制**: 随时启动/停止容器
+- 📊 **资源限制**: 每用户最多3个并发容器
+- ✨ **智能销毁**: FLAG正确提交后自动销毁
+
+### 5️⃣ 强大的管理后台
+
+- 👥 **用户管理**: 创建、编辑、删除用户，重置密码
+- 📝 **题目管理**: 添加、编辑、删除题目，支持批量导入
+- 🐳 **容器监控**: 查看所有运行中容器，强制停止
+- 📊 **平台统计**: 用户数、题目数、提交记录、排行榜
+- 🖼️ **镜像管理**: 查看所有CyberPrism Docker镜像
+
+## 🏗️ 技术架构
+
+### 前端技术栈
+
+```
+Vue 3 (Composition API)
+├── Element Plus - UI组件库
+├── ECharts - 数据可视化
+├── Vue Router - 路由管理
+├── Axios - HTTP客户端
+└── Vite - 构建工具
+```
+
+### 后端技术栈
+
+```
+Flask 2.3+
+├── SQLAlchemy - ORM框架
+├── Flask-JWT-Extended - JWT认证
+├── Flask-CORS - 跨域支持
+├── Flask-Migrate - 数据库迁移
+├── Docker SDK - 容器管理
+└── SQLite - 数据库
+```
+
+### 容器化方案
+
+```
+Docker 20.10+
+├── Docker Compose - 容器编排
+├── 动态端口映射 - 30000-40000
+├── 环境变量注入 - FLAG动态生成
+└── 自动资源清理 - 定时任务
+```
+
+## 🚀 快速开始
 
 ### 前置要求
-- Python 3.9+
-- Node.js 16+
-- Docker 20.10+
-- Docker Compose 2.0+
 
-### 1. 启动后端
+| 软件 | 版本要求 | 说明 |
+|------|---------|------|
+| Python | 3.9+ | 后端运行环境 |
+| Node.js | 16+ | 前端开发环境 |
+| Docker | 20.10+ | 容器运行环境 |
+| Docker Compose | 2.0+ | 容器编排工具 |
+
+### 1. 克隆项目
+
+```bash
+git clone https://github.com/你的用户名/CyberPrism.git
+cd CyberPrism
+```
+
+### 2. 启动后端
+
 ```bash
 cd backend
+
+# 安装依赖
 pip install -r requirements.txt
+
+# 启动服务(自动初始化数据库)
 python run.py
 ```
 
-后端将运行在 `http://localhost:5000`
+后端运行在: `http://localhost:5000`
 
-默认管理员: `admin` / `admin123`
+**默认管理员账户**:
+- 用户名: `admin`
+- 密码: `admin123`
 
-### 2. 启动前端
+### 3. 启动前端
+
 ```bash
 cd frontend
+
+# 安装依赖
 npm install
+
+# 启动开发服务器
 npm run dev
 ```
 
-前端将运行在 `http://localhost:3000`
+前端运行在: `http://localhost:3000`
 
-### 3. 访问平台
+### 4. 导入题目（可选）
+
+```bash
+cd backend
+
+# 导入50道选择题
+python import_questions.py
+```
+
+### 5. 访问平台
+
 打开浏览器访问: `http://localhost:3000`
 
-## 项目结构
+- 使用 `admin/admin123` 登录管理后台
+- 或注册新用户开始答题
+
+## 📁 项目结构
 
 ```
 CyberPrism/
-├── backend/                 # Flask后端
+│
+├── backend/                     # Flask后端
 │   ├── app/
-│   │   ├── models/         # 数据库模型
-│   │   ├── routes/         # API路由
-│   │   ├── utils/          # 工具函数
-│   │   └── docker_challenges/  # 容器管理
-│   ├── app.py             # 应用入口
-│   └── requirements.txt
-├── frontend/               # Vue前端
+│   │   ├── __init__.py         # 应用初始化(包含init_db)
+│   │   ├── models/             # 数据模型
+│   │   │   └── __init__.py     # User, Challenge, ContainerInstance等
+│   │   ├── routes/             # API路由
+│   │   │   ├── auth.py         # 认证API
+│   │   │   ├── challenges.py   # 题目API
+│   │   │   ├── containers.py   # 容器API
+│   │   │   ├── users.py        # 用户API
+│   │   │   └── admin.py        # 管理员API
+│   │   ├── docker_challenges/  # Docker容器管理
+│   │   │   └── manager.py      # DockerManager类
+│   │   └── utils/              # 工具函数
+│   │       ├── auth.py         # 密码加密
+│   │       └── decorators.py   # 权限装饰器
+│   ├── migrations/              # 数据库迁移
+│   ├── run.py                  # 启动脚本
+│   ├── import_questions.py     # 题目导入脚本
+│   ├── question_bank.json      # 题库数据(50道题)
+│   └── requirements.txt        # Python依赖
+│
+├── frontend/                    # Vue前端
 │   ├── src/
-│   │   ├── api/           # API封装
-│   │   ├── components/    # 组件
-│   │   ├── views/         # 页面
-│   │   ├── router/        # 路由
-│   │   └── main.js
-│   ├── vite.config.js
-│   └── package.json
-├── challenges/             # 靶场题目
-│   ├── web-easy/          # SQL注入(简单)
-│   ├── web-medium/        # 文件包含(中等)
-│   ├── web-hard/          # 命令注入(困难)
-│   └── README.md          # 靶场说明
-├── docs/                  # 文档
-│   ├── DEPLOYMENT.md      # 部署文档
-│   └── API.md             # API文档
-└── README.md
+│   │   ├── api/                # API封装
+│   │   │   ├── auth.js         # 认证API
+│   │   │   ├── challenge.js    # 题目API
+│   │   │   ├── container.js    # 容器API
+│   │   │   ├── user.js         # 用户API
+│   │   │   └── admin.js        # 管理API
+│   │   ├── components/         # 公共组件
+│   │   ├── views/              # 页面组件
+│   │   │   ├── Login.vue       # 登录页
+│   │   │   ├── Register.vue    # 注册页
+│   │   │   ├── Dashboard.vue   # 个人中心
+│   │   │   ├── Challenges.vue  # 题目列表
+│   │   │   ├── Containers.vue  # 我的容器
+│   │   │   ├── Profile.vue     # 个人资料
+│   │   │   ├── Leaderboard.vue # 排行榜
+│   │   │   └── admin/          # 管理后台页面
+│   │   ├── router/             # 路由配置
+│   │   └── main.js             # 应用入口
+│   ├── vite.config.js          # Vite配置
+│   └── package.json            # Node.js依赖
+│
+├── challenges/                  # 靶场题目
+│   ├── README.md               # 出题指南
+│   ├── web-sql-injection/      # SQL注入题目
+│   │   ├── Dockerfile
+│   │   ├── docker-compose.yml
+│   │   └── src/                # 题目源码
+│   ├── file-inclusion/         # 文件包含题目
+│   │   ├── Dockerfile
+│   │   ├── docker-compose.yml
+│   │   └── src/
+│   └── command-injection/      # 命令注入题目
+│       ├── Dockerfile
+│       ├── docker-compose.yml
+│       └── src/
+│
+├── scripts/                     # 工具脚本
+│   ├── manage-images.sh        # 镜像管理(Linux/Mac)
+│   └── manage-images.ps1       # 镜像管理(Windows)
+│
+├── docs/                        # 文档
+│   ├── DEPLOYMENT.md           # 部署文档
+│   └── PROJECT_SUMMARY.md      # 项目概要
+│
+├── .gitignore                   # Git忽略配置
+└── README.md                    # 本文件
 ```
 
-## 文档
+## 🎨 功能详解
 
-- [部署文档](docs/DEPLOYMENT.md) - 详细的部署步骤和配置说明
-- [API文档](docs/API.md) - 完整的API接口文档
-- [靶场说明](challenges/README.md) - 靶场题目详解和解题思路
+### 技能标签体系
 
-## 技能标签体系
-
-平台采用基于MITRE ATT&CK框架的技能标签体系:
+基于MITRE ATT&CK框架的4大类13个技能点:
 
 ```json
 {
@@ -146,75 +290,251 @@ CyberPrism/
 }
 ```
 
-用户通过解答题目自动解锁相应技能标签。
-
-## 特色功能
+用户通过正确解答题目,自动解锁对应的技能标签。
 
 ### 能力矩阵可视化
-使用ECharts热力图展示用户的技能掌握情况:
-- 绿色方块: 已解锁技能
-- 灰色方块: 未解锁技能
-- 直观展示PT能力全貌
 
-### Docker容器隔离
-每个用户的靶场环境完全隔离:
-- 独立的Docker容器
-- 动态端口映射(30000-40000)
-- 环境变量注入FLAG
-- 自动资源回收
+使用ECharts热力图展示:
+- ✅ **绿色方块**: 已解锁技能
+- ⬜ **灰色方块**: 未解锁技能
+- 📊 **直观展示**: 一眼看出PT能力全貌
 
-### 双权限系统
-- **普通用户**: 注册、做题、查看个人数据
-- **管理员**: 完整的平台管理权限
+### Docker容器管理流程
 
-## 开发参考
+```
+用户启动容器
+    ↓
+系统分配随机端口(30000-40000)
+    ↓
+注入FLAG环境变量
+    ↓
+启动Docker容器
+    ↓
+60分钟倒计时开始
+    ↓
+用户可延时/销毁
+    ↓
+提交正确FLAG → 自动销毁
+或 超时 → 自动清理
+```
 
-### 添加新靶场题
+## 🔧 部署说明
 
-1. 在`challenges/`下创建新目录
-2. 编写Dockerfile和docker-compose.yml
-3. 通过管理员API添加题目信息
-4. 配置技能标签映射
+### 开发环境
 
-详见[靶场说明](challenges/README.md)
+按照[快速开始](#快速开始)部分操作即可。
 
-### 添加新技能标签
+### 生产环境
 
-1. 修改后端`app/routes/challenges.py`中的`SKILL_CODES`字典
-2. 更新题目的`skill_tags`字段
-3. 前端自动适配新标签
+详见 [部署文档](docs/DEPLOYMENT.md),包括:
+- Nginx反向代理配置
+- HTTPS证书配置
+- 数据库迁移到MySQL/PostgreSQL
+- 容器资源限制
+- 安全加固建议
 
-## 安全说明
+### Docker Compose 一键部署
 
-本平台用于教育目的,包含的漏洞环境仅供学习使用:
-- 所有靶场环境均运行在Docker容器中
-- 不要将靶场直接暴露到公网
-- 定期清理过期容器
-- 生产部署时修改默认密码
+```bash
+# 构建镜像
+docker-compose build
 
-## 已知限制
+# 启动服务
+docker-compose up -d
 
-1. **前端页面**: 部分页面为简化实现,可根据需求扩展
-2. **选择题**: 需要手动通过API添加
-3. **Windows Docker**: 路径处理可能需要额外配置
+# 查看日志
+docker-compose logs -f
+```
 
-## 后续扩展
+## 👨‍💻 开发指南
 
-- [ ] 添加更多靶场题目类型
-- [ ] 实现选择题在线编辑界面
-- [ ] 增加用户间的PK功能
-- [ ] 导出能力报告PDF
+### 添加新靶场题目
+
+1. **创建题目目录**:
+```bash
+mkdir challenges/your-challenge
+cd challenges/your-challenge
+```
+
+2. **编写Dockerfile**:
+```dockerfile
+FROM php:8.1-apache
+COPY ./src /var/www/html/
+RUN chown -R www-data:www-data /var/www/html
+EXPOSE 80
+```
+
+3. **编写docker-compose.yml**:
+```yaml
+version: '3.8'
+services:
+  web:
+    build:
+      context: .
+    image: cyberprism/your-challenge
+    container_name: cyberprism-your-challenge-${USER_ID:-default}
+    ports:
+      - "80"
+    environment:
+      - FLAG=${FLAG}
+```
+
+4. **管理后台添加题目**:
+- 题目类型选择: `docker`
+- Docker镜像填写: `cyberprism/your-challenge`
+- 容器端口: `80`
+
+详见 [出题指南](challenges/README.md)
+
+### 添加新选择题
+
+通过管理后台API或修改 `question_bank.json`,然后运行:
+
+```bash
+cd backend
+python import_questions.py
+```
+
+### API开发
+
+所有API接口定义在 `backend/app/routes/`,遵循RESTful规范:
+
+- `GET /api/challenges` - 获取题目列表
+- `POST /api/challenges/submit` - 提交答案
+- `POST /api/containers/start/:id` - 启动容器
+- `POST /api/containers/:id/stop` - 停止容器
+
+### 数据库迁移
+
+```bash
+cd backend
+
+# 创建迁移
+flask db migrate -m "描述"
+
+# 应用迁移
+flask db upgrade
+
+# 回滚迁移
+flask db downgrade
+```
+
+## ❓ 常见问题
+
+### Q1: Docker容器无法启动?
+
+**A**: 检查以下几点:
+1. Docker服务是否运行: `docker ps`
+2. 镜像是否已构建: `docker images | grep cyberprism`
+3. 端口是否被占用: `netstat -tuln | grep 30000-40000`
+4. 查看后端日志获取详细错误信息
+
+### Q2: 前端无法连接后端?
+
+**A**: 检查:
+1. 后端是否运行在 `http://localhost:5000`
+2. CORS是否配置正确
+3. 前端 `vite.config.js` 中的代理配置
+
+### Q3: 容器显示"已停止"但Docker显示在运行?
+
+**A**: 这是数据库记录与实际状态不同步,已在最新版本修复。运行 `python run.py` 重启后端即可。
+
+### Q4: 如何修改管理员密码?
+
+**A**:
+```python
+from app import app, db
+from app.models import User
+from app.utils import hash_password
+
+with app.app_context():
+    admin = User.query.filter_by(username='admin').first()
+    admin.password_hash = hash_password('新密码')
+    db.session.commit()
+```
+
+### Q5: 如何批量导入用户?
+
+**A**: 使用管理后台API:
+```bash
+curl -X POST http://localhost:5000/api/admin/users \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"username":"user1","email":"user1@example.com",...}'
+```
+
+### Q6: 容器时间显示不正确?
+
+**A**: 已修复时区问题,确保使用最新版本。后端返回UTC时间带'Z'标识符,前端自动转换为本地时间。
+
+## 🎯 功能路线图
+
+### 已完成 ✅
+- [x] 用户认证系统
+- [x] 选择题和靶场题
+- [x] Docker容器管理
+- [x] 技能标签体系
+- [x] 能力矩阵可视化
+- [x] 管理后台
+- [x] 排行榜系统
+- [x] 容器自动清理
+- [x] 镜像命名规范
+
+### 计划中 📋
+- [ ] 题目标签搜索/筛选
+- [ ] 题目难度评分系统
+- [ ] 用户间PK功能
 - [ ] 团队协作模式
-- [ ] 更详细的解题过程记录
+- [ ] 导出能力报告PDF
+- [ ] WebShell在线终端
+- [ ] 题目WriteUp系统
+- [ ] 邮件通知功能
+- [ ] 二次验证(2FA)
 
-## 致谢
+## 🔒 安全说明
 
-本项目参考了开源CTF平台CTFd的设计理念。
+本平台用于**教育和学习目的**,请遵守以下原则:
 
-## 许可证
+1. ⚠️ **不要暴露到公网**: 靶场环境包含真实漏洞
+2. 🔐 **修改默认密码**: 生产环境务必修改 `admin/admin123`
+3. 🐳 **隔离运行**: Docker容器提供基本隔离,但不是绝对安全
+4. 🔒 **HTTPS部署**: 生产环境使用HTTPS保护敏感数据
+5. 📊 **定期清理**: 及时清理过期容器释放资源
 
-MIT License
+## 🤝 贡献指南
+
+欢迎提交Issue和Pull Request!
+
+1. Fork本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启Pull Request
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+
+## 🙏 致谢
+
+- [CTFd](https://github.com/CTFd/CTFd) - CTF平台设计参考
+- [MITRE ATT&CK](https://attack.mitre.org/) - 技能标签体系
+- [Element Plus](https://element-plus.org/) - Vue 3 UI框架
+- [ECharts](https://echarts.apache.org/) - 数据可视化
+- [Flask](https://flask.palletsprojects.com/) - Python Web框架
+
+## 📧 联系方式
+
+- 项目主页: [https://github.com/你的用户名/CyberPrism](https://github.com/你的用户名/CyberPrism)
+- Issue反馈: [https://github.com/你的用户名/CyberPrism/issues](https://github.com/你的用户名/CyberPrism/issues)
 
 ---
 
-**开始你的PT能力评估之旅吧!** 🚀
+<div align="center">
+
+**开始你的网络安全能力评估之旅吧!** 🚀
+
+Made with ❤️ by CyberPrism Team
+
+</div>

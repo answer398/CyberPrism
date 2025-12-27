@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+    image: cyberprism/command-injection
+    container_name: cyberprism-command-injection-${USER_ID:-default}
     ports:
       - "5000"
     environment:

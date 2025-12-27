@@ -4,10 +4,6 @@
       <el-aside width="250px">
         <div class="logo">CyberPrism</div>
         <el-menu :default-active="'admin/users'" @select="handleMenuSelect">
-          <el-menu-item index="dashboard">
-            <el-icon><HomeFilled /></el-icon>
-            <span>个人中心</span>
-          </el-menu-item>
           <el-menu-item index="challenges">
             <el-icon><Document /></el-icon>
             <span>题目挑战</span>
@@ -79,7 +75,7 @@
             <el-table-column prop="id" label="ID" width="80" />
             <el-table-column prop="username" label="用户名" width="120" />
             <el-table-column prop="display_name" label="姓名" width="120" />
-            <el-table-column prop="common_id" label="学号/工号" width="120" />
+            <el-table-column prop="common_id" label="常用ID" width="120" />
             <el-table-column prop="email" label="邮箱" min-width="180" />
             <el-table-column prop="is_admin" label="权限" width="100">
               <template #default="{ row }">
@@ -123,8 +119,8 @@
           <el-input v-model="form.display_name" placeholder="请输入姓名" />
         </el-form-item>
 
-        <el-form-item label="学号/工号" prop="common_id">
-          <el-input v-model="form.common_id" placeholder="请输入学号或工号" />
+        <el-form-item label="常用ID" prop="common_id">
+          <el-input v-model="form.common_id" placeholder="请输入常用ID" />
         </el-form-item>
 
         <el-form-item label="邮箱" prop="email">
@@ -190,7 +186,7 @@ export default {
         { min: 3, max: 20, message: '用户名长度为3-20个字符', trigger: 'blur' }
       ],
       display_name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-      common_id: [{ required: true, message: '请输入学号/工号', trigger: 'blur' }],
+      common_id: [{ required: true, message: '请输入常用ID', trigger: 'blur' }],
       email: [
         { required: true, message: '请输入邮箱', trigger: 'blur' },
         { type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur' }

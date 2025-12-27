@@ -4,10 +4,6 @@
       <el-aside width="250px">
         <div class="logo">CyberPrism</div>
         <el-menu :default-active="'admin/challenges'" @select="handleMenuSelect">
-          <el-menu-item index="dashboard">
-            <el-icon><HomeFilled /></el-icon>
-            <span>个人中心</span>
-          </el-menu-item>
           <el-menu-item index="challenges">
             <el-icon><Document /></el-icon>
             <span>题目挑战</span>
@@ -46,7 +42,7 @@
               <span>容器管理</span>
             </el-menu-item>
           </el-sub-menu>
-          <el-menu-item @click="handleLogout">
+          <el-menu-item index="logout" @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             <span>退出登录</span>
           </el-menu-item>
@@ -175,8 +171,8 @@
 
         <el-form-item label="类型" prop="type">
           <el-radio-group v-model="form.type">
-            <el-radio label="choice">选择题</el-radio>
-            <el-radio label="docker">靶场题</el-radio>
+            <el-radio value="choice">选择题</el-radio>
+            <el-radio value="docker">靶场题</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -216,10 +212,10 @@
 
           <el-form-item label="正确答案" prop="correct_answer">
             <el-radio-group v-model="form.correct_answer">
-              <el-radio label="A">A</el-radio>
-              <el-radio label="B">B</el-radio>
-              <el-radio label="C">C</el-radio>
-              <el-radio label="D">D</el-radio>
+              <el-radio value="A">A</el-radio>
+              <el-radio value="B">B</el-radio>
+              <el-radio value="C">C</el-radio>
+              <el-radio value="D">D</el-radio>
             </el-radio-group>
           </el-form-item>
         </template>
@@ -227,7 +223,26 @@
         <!-- 靶场题特定字段 -->
         <template v-if="form.type === 'docker'">
           <el-form-item label="镜像名称" prop="docker_image">
-            <el-input v-model="form.docker_image" placeholder="如: cyberprism/web-easy" />
+            <el-select
+              v-model="form.docker_image"
+              placeholder="请选择Docker镜像"
+              filterable
+              style="width: 100%"
+              :loading="dockerImagesLoading"
+            >
+              <el-option
+                v-for="image in dockerImages"
+                :key="image.name"
+                :label="`${image.name} (${image.size}MB)`"
+                :value="image.name"
+              >
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>{{ image.name }}</span>
+                  <span style="color: #8492a6; font-size: 13px;">{{ image.size }}MB</span>
+                </div>
+              </el-option>
+            </el-select>
+            <div class="form-help">从已构建的Docker镜像中选择</div>
           </el-form-item>
 
           <el-form-item label="容器端口" prop="docker_port">
@@ -256,7 +271,7 @@
 import { ref, onMounted, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getAllChallenges, createChallenge, updateChallenge, deleteChallenge as deleteChallengeAPI } from '@/api/admin'
+import { getAllChallenges, createChallenge, updateChallenge, deleteChallenge as deleteChallengeAPI, getDockerImages } from '@/api/admin'
 
 // 技能标签矩阵
 const SKILL_MATRIX = {
@@ -296,6 +311,10 @@ export default {
     const submitLoading = ref(false)
     const formRef = ref(null)
     const skillMatrix = SKILL_MATRIX
+
+    // Docker镜像相关
+    const dockerImages = ref([])
+    const dockerImagesLoading = ref(false)
 
     // 筛选器
     const filterCategory = ref('')
@@ -352,6 +371,24 @@ export default {
       }
     }
 
+    const loadDockerImages = async () => {
+      dockerImagesLoading.value = true
+      try {
+        const response = await getDockerImages()
+        dockerImages.value = response.images || []
+
+        if (dockerImages.value.length === 0) {
+          ElMessage.info('未找到已构建的Docker镜像，请先使用 docker-compose build 构建镜像')
+        }
+      } catch (error) {
+        console.error('加载Docker镜像失败:', error)
+        dockerImages.value = []
+        ElMessage.warning('无法加载Docker镜像列表，请确保Docker服务正常运行并已构建镜像')
+      } finally {
+        dockerImagesLoading.value = false
+      }
+    }
+
     const getSkillOptions = () => {
       if (!form.category) return {}
       return skillMatrix[form.category] || {}
@@ -401,10 +438,15 @@ export default {
       dialogMode.value = 'add'
       resetForm()
       dialogVisible.value = true
+      // 加载Docker镜像列表
+      loadDockerImages()
     }
 
     const editChallenge = (challenge) => {
       dialogMode.value = 'edit'
+      // 加载Docker镜像列表
+      loadDockerImages()
+
       form.id = challenge.id
       form.title = challenge.title
       form.description = challenge.description
@@ -576,12 +618,15 @@ export default {
       form,
       rules,
       skillMatrix,
+      dockerImages,
+      dockerImagesLoading,
       filterCategory,
       filterSkillTag,
       filterType,
       filterDifficulty,
       filteredChallenges,
       loadChallenges,
+      loadDockerImages,
       getSkillOptions,
       getFilterSkillOptions,
       handleCategoryChange,

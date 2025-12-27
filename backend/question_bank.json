@@ -11,7 +11,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Google Hacking中，以下哪个语法可以搜索特定文件类型？",
@@ -23,7 +23,7 @@
         },
         "correct_answer": "C",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "在信息收集阶段，攻击者可以通过DNS记录获取哪些信息？",
@@ -35,7 +35,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "社会工程学攻击中最常用的信息收集来源是？",
@@ -47,7 +47,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       }
     ],
     "网络扫描": [
@@ -61,7 +61,7 @@
         },
         "correct_answer": "C",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "在TCP三次握手中，如果目标端口开放，服务器会返回什么？",
@@ -73,7 +73,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "以下哪个端口通常用于HTTPS服务？",
@@ -85,7 +85,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Nmap中使用哪个参数可以进行操作系统识别？",
@@ -97,7 +97,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ],
     "子域枚举": [
@@ -111,7 +111,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "子域名爆破攻击通常使用什么方法？",
@@ -123,7 +123,7 @@
         },
         "correct_answer": "A",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "通过Certificate Transparency日志可以发现什么？",
@@ -135,7 +135,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "DNS区域传送（Zone Transfer）漏洞会导致什么？",
@@ -147,7 +147,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ],
     "网络拓扑分析": [
@@ -161,7 +161,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "在网络拓扑分析中，DMZ区域是指？",
@@ -173,7 +173,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "路由跟踪过程中，如果某个跳点显示\"***\"，最可能的原因是？",
@@ -185,7 +185,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ]
   },
@@ -201,7 +201,7 @@
         },
         "correct_answer": "A",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "CVSS评分系统中，分数在9.0-10.0之间表示什么严重程度？",
@@ -213,7 +213,7 @@
         },
         "correct_answer": "D",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Exploit-DB数据库主要提供什么？",
@@ -225,7 +225,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "以下哪个不属于常见的Web漏洞？",
@@ -237,7 +237,7 @@
         },
         "correct_answer": "D",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       }
     ],
     "提权与横向移动": [
@@ -251,7 +251,7 @@
         },
         "correct_answer": "A",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Windows系统中，哪个工具常用于横向移动攻击？",
@@ -263,7 +263,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "以下哪种方法可以用于Linux提权？",
@@ -275,7 +275,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "Pass-the-Hash攻击主要针对什么协议？",
@@ -287,7 +287,7 @@
         },
         "correct_answer": "B",
         "difficulty": "hard",
-        "points": 200
+        "points": 50
       }
     ],
     "社会工程学攻击": [
@@ -301,7 +301,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "SET（Social Engineering Toolkit）工具主要用于？",
@@ -313,7 +313,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "以下哪种行为不属于社会工程学攻击？",
@@ -325,7 +325,7 @@
         },
         "correct_answer": "C",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       }
     ],
     "恶意软件": [
@@ -339,7 +339,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "APT攻击中的APT是什么意思？",
@@ -351,7 +351,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "Rootkit恶意软件的主要特点是？",
@@ -363,7 +363,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "沙箱（Sandbox）技术在恶意软件分析中的作用是？",
@@ -375,7 +375,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ]
   },
@@ -391,7 +391,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "Kerberos协议中的Golden Ticket攻击需要什么？",
@@ -403,7 +403,7 @@
         },
         "correct_answer": "B",
         "difficulty": "hard",
-        "points": 200
+        "points": 50
       },
       {
         "question": "SMB协议在横向移动中常用于？",
@@ -415,7 +415,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ],
     "后门植入": [
@@ -429,7 +429,7 @@
         },
         "correct_answer": "A",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Webshell通常是什么类型的文件？",
@@ -441,7 +441,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "反向Shell与正向Shell的主要区别是？",
@@ -453,7 +453,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ],
     "权限提升": [
@@ -467,7 +467,7 @@
         },
         "correct_answer": "C",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "UAC（用户账户控制）的主要作用是？",
@@ -479,7 +479,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Linux内核漏洞提权的原理是？",
@@ -491,7 +491,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ]
   },
@@ -507,7 +507,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "DLL劫持攻击利用了什么机制？",
@@ -519,7 +519,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "以下哪种技术可以绕过应用程序白名单？",
@@ -531,7 +531,7 @@
         },
         "correct_answer": "A",
         "difficulty": "hard",
-        "points": 200
+        "points": 50
       }
     ],
     "文件/日志清理": [
@@ -545,7 +545,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "Linux中使用哪个命令可以清除bash历史记录？",
@@ -557,7 +557,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Timestomping技术是指？",
@@ -569,7 +569,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "以下哪个工具可以安全删除文件并防止恢复？",
@@ -581,7 +581,7 @@
         },
         "correct_answer": "A",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ],
     "命令与控制": [
@@ -595,7 +595,7 @@
         },
         "correct_answer": "B",
         "difficulty": "easy",
-        "points": 50
+        "points": 10
       },
       {
         "question": "Domain Fronting技术用于？",
@@ -607,7 +607,7 @@
         },
         "correct_answer": "B",
         "difficulty": "hard",
-        "points": 200
+        "points": 50
       },
       {
         "question": "DNS隧道（DNS Tunneling）可以用于？",
@@ -619,7 +619,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       },
       {
         "question": "Cobalt Strike的Beacon是什么？",
@@ -631,7 +631,7 @@
         },
         "correct_answer": "B",
         "difficulty": "medium",
-        "points": 100
+        "points": 25
       }
     ]
   }

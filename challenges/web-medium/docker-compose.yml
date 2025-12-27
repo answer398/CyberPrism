@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+    image: cyberprism/file-inclusion
+    container_name: cyberprism-file-inclusion-${USER_ID:-default}
     ports:
       - "80"
     environment:

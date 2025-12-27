@@ -244,7 +244,6 @@ def update_challenge(challenge_id):
 
 
 @bp.route('/challenges/<int:challenge_id>', methods=['DELETE'])
-
 @admin_required
 def delete_challenge(challenge_id):
     """删除题目"""
@@ -252,6 +251,22 @@ def delete_challenge(challenge_id):
     if not challenge:
         return jsonify({'error': '题目不存在'}), 404
 
+    # 如果是靶场题,先停止所有运行中的容器
+    if challenge.type == 'docker':
+        running_containers = ContainerInstance.query.filter_by(
+            challenge_id=challenge_id,
+            status='running'
+        ).all()
+
+        for container in running_containers:
+            try:
+                docker_manager.stop_container(container.id, is_admin=True)
+                print(f"已停止容器: {container.container_name}")
+            except Exception as e:
+                print(f"停止容器失败: {str(e)}")
+                # 继续执行,不阻止删除
+
+    # 删除题目(级联删除会自动删除submissions和container_instances)
     db.session.delete(challenge)
     db.session.commit()
     return jsonify({'message': '题目已删除'}), 200
@@ -274,11 +289,8 @@ def get_all_containers():
 def admin_stop_container(instance_id):
     """管理员停止容器"""
     try:
-        instance = docker_manager.stop_container(instance_id, is_admin=True)
-        return jsonify({
-            'message': '容器已停止',
-            'container': instance.to_dict()
-        }), 200
+        docker_manager.stop_container(instance_id, is_admin=True)
+        return jsonify({'message': '容器已停止'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
@@ -290,7 +302,7 @@ def admin_extend_container(instance_id):
     try:
         data = request.get_json()
         minutes = data.get('minutes', 30)
-        instance = docker_manager.extend_container(instance_id, minutes)
+        instance = docker_manager.extend_container(instance_id, minutes=minutes, is_admin=True)
         return jsonify({
             'message': f'容器时间已延长 {minutes} 分钟',
             'container': instance.to_dict()
@@ -370,7 +382,7 @@ def get_recent_submissions():
             'username': user.username if user else 'Unknown',
             'challenge_title': challenge.title if challenge else 'Unknown',
             'is_correct': sub.is_correct,
-            'submitted_at': sub.submitted_at.isoformat()
+            'submitted_at': sub.submitted_at.isoformat() + 'Z' if sub.submitted_at else None
         })
 
     return jsonify(result), 200
@@ -408,3 +420,40 @@ def get_challenge_stats():
         })
 
     return jsonify(result), 200
+
+
+@bp.route('/docker-images', methods=['GET'])
+@admin_required
+def list_docker_images():
+    """列出所有CyberPrism镜像"""
+    from app.docker_challenges.manager import get_docker_client
+
+    docker_client = get_docker_client()
+
+    if not docker_client:
+        print("无法连接到Docker")
+        return jsonify({'images': []}), 200  # 返回空列表而不是错误
+
+    try:
+        images = docker_client.images.list(filters={'reference': 'cyberprism/*'})
+
+        image_list = []
+        for img in images:
+            if img.tags:  # 确保镜像有标签
+                for tag in img.tags:
+                    image_list.append({
+                        'name': tag,
+                        'id': img.id[:12],
+                        'size': round(img.attrs.get('Size', 0) / (1024 * 1024), 2)  # MB
+                    })
+
+        # 按名称排序
+        image_list.sort(key=lambda x: x['name'])
+
+        print(f"找到 {len(image_list)} 个镜像")
+        return jsonify({'images': image_list}), 200
+    except Exception as e:
+        print(f"获取镜像列表失败: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'images': []}), 200  # 返回空列表而不是错误

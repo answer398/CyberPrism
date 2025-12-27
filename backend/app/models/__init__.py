@@ -45,7 +45,7 @@ class User(db.Model):
             'is_admin': self.is_admin,
             'total_points': self.total_points,
             'solved_count': self.solved_count,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'created_at': self.created_at.isoformat() + 'Z' if self.created_at else None
         }
         if include_skills:
             data['skill_tags'] = [tag.to_dict() for tag in self.skill_tags]
@@ -68,7 +68,7 @@ class UserSkillTag(db.Model):
             'category': self.category,
             'skill_name': self.skill_name,
             'skill_code': self.skill_code,
-            'unlocked_at': self.unlocked_at.isoformat() if self.unlocked_at else None
+            'unlocked_at': self.unlocked_at.isoformat() + 'Z' if self.unlocked_at else None
         }
 
 
@@ -103,6 +103,7 @@ class Challenge(db.Model):
 
     # 关系
     submissions = db.relationship('Submission', backref='challenge', lazy='dynamic', cascade='all, delete-orphan')
+    containers = db.relationship('ContainerInstance', backref='challenge_ref', lazy='dynamic', cascade='all, delete-orphan')
 
     def to_dict(self, show_answer=False):
         data = {
@@ -154,7 +155,7 @@ class Submission(db.Model):
             'challenge_id': self.challenge_id,
             'submitted_answer': self.submitted_answer,
             'is_correct': self.is_correct,
-            'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None
+            'submitted_at': self.submitted_at.isoformat() + 'Z' if self.submitted_at else None
         }
 
 
@@ -172,18 +173,16 @@ class ContainerInstance(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     expires_at = db.Column(db.DateTime)  # 过期时间(60分钟后)
 
-    challenge = db.relationship('Challenge', backref='instances')
-
     def to_dict(self):
         return {
             'id': self.id,
             'user_id': self.user_id,
             'challenge_id': self.challenge_id,
-            'challenge_title': self.challenge.title if self.challenge else None,
+            'challenge_title': self.challenge_ref.title if self.challenge_ref else None,
             'container_id': self.container_id,
             'container_name': self.container_name,
             'host_port': self.host_port,
             'status': self.status,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'expires_at': self.expires_at.isoformat() if self.expires_at else None
+            'created_at': self.created_at.isoformat() + 'Z' if self.created_at else None,
+            'expires_at': self.expires_at.isoformat() + 'Z' if self.expires_at else None
         }

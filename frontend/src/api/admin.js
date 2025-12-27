@@ -79,3 +79,8 @@ export const getTopUsers = (limit = 10) => {
 export const getChallengeStats = () => {
   return request.get('/admin/challenges/stats')
 }
+
+// ===== Docker镜像管理 =====
+export const getDockerImages = () => {
+  return request.get('/admin/docker-images')
+}

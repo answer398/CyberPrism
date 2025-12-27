@@ -31,11 +31,8 @@ def stop_container(instance_id):
     user = get_current_user()
 
     try:
-        instance = docker_manager.stop_container(instance_id, user_id=user.id, is_admin=user.is_admin)
-        return jsonify({
-            'message': '容器已停止',
-            'container': instance.to_dict()
-        }), 200
+        docker_manager.stop_container(instance_id, user_id=user.id, is_admin=user.is_admin)
+        return jsonify({'message': '容器已停止'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
@@ -52,7 +49,7 @@ def extend_container(instance_id):
         return jsonify({'error': '延长时间必须在10-60分钟之间'}), 400
 
     try:
-        instance = docker_manager.extend_container(instance_id, user.id, minutes)
+        instance = docker_manager.extend_container(instance_id, user_id=user.id, minutes=minutes, is_admin=False)
         return jsonify({
             'message': f'容器时间已延长{minutes}分钟',
             'container': instance.to_dict()
