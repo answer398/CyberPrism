@@ -1,6 +1,7 @@
 # CyberPrism - 网络安全能力评估平台
 
 <div align="center">
+
 ![CyberPrism](https://img.shields.io/badge/CyberPrism-CTF%20Platform-blue)
 ![Python](https://img.shields.io/badge/Python-3.9%2B-green)
 ![Vue](https://img.shields.io/badge/Vue-3.0-brightgreen)
@@ -468,30 +469,6 @@ curl -X POST http://localhost:5000/api/admin/users \
 
 **A**: 已修复时区问题,确保使用最新版本。后端返回UTC时间带'Z'标识符,前端自动转换为本地时间。
 
-## 🎯 功能路线图
-
-### 已完成 ✅
-- [x] 用户认证系统
-- [x] 选择题和靶场题
-- [x] Docker容器管理
-- [x] 技能标签体系
-- [x] 能力矩阵可视化
-- [x] 管理后台
-- [x] 排行榜系统
-- [x] 容器自动清理
-- [x] 镜像命名规范
-
-### 计划中 📋
-- [ ] 题目标签搜索/筛选
-- [ ] 题目难度评分系统
-- [ ] 用户间PK功能
-- [ ] 团队协作模式
-- [ ] 导出能力报告PDF
-- [ ] WebShell在线终端
-- [ ] 题目WriteUp系统
-- [ ] 邮件通知功能
-- [ ] 二次验证(2FA)
-
 ## 🔒 安全说明
 
 本平台用于**教育和学习目的**,请遵守以下原则:
@@ -526,8 +503,8 @@ curl -X POST http://localhost:5000/api/admin/users \
 
 ## 📧 联系方式
 
-- 项目主页: [https://github.com/answer398/CyberPrism](https://github.com/你的用户名/CyberPrism)
-- Issue反馈: [https://github.com/answer398/CyberPrism/issues](https://github.com/你的用户名/CyberPrism/issues)
+- 项目主页: [https://github.com/answer398/CyberPrism](https://github.com/answer398/CyberPrism)
+- Issue反馈: [https://github.com/answer398/CyberPrism/issues](https://github.com/answer398/CyberPrism/issues)
 
 ---
 
